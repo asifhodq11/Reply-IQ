@@ -80,3 +80,4 @@ If starting a new chat, tell the AI:
 4. Phase 3 builds: user_model.py, decorators.py, auth_schema.py, auth.py routes, and 8 auth tests
 5. Before writing tests, run the 5 migrations on the TEST Supabase project too
 6. Also run the same 5 SQL files against the test Supabase project before Phase 3 tests can run
+7. FIRST TASK of Phase 3 before writing any new code: Fix health endpoint — "environment" shows as "unknown" instead of "development". Fix: use os.environ.get('FLASK_ENV', 'unknown') in health.py to read the environment correctly. Restart server and confirm health shows "environment": "development" before proceeding.
