@@ -1,0 +1,21 @@
+# ============================================================
+# ReplyIQ Backend — Dev/Test Dependencies
+# Install on top of requirements.txt
+# ============================================================
+
+# Testing
+pytest==8.3.5
+pytest-cov==6.1.1
+
+# Code formatting
+black==25.1.0
+isort==6.0.1
+
+# Linting
+flake8==7.2.0
+
+# Pre-commit hooks
+pre-commit==4.2.0
+
+# Secret detection
+detect-secrets==1.5.0

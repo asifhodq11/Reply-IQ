@@ -1,0 +1,2 @@
+﻿-- ReplyIQ Migration: 005_create_poller_log
+-- Phase 2 — will contain CREATE TABLE + RLS + policies + indexes

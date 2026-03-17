@@ -1,0 +1,36 @@
+# ============================================================
+# ReplyIQ Backend — Production Dependencies
+# Pinned to exact versions for reproducible builds
+# Python 3.12 target
+# ============================================================
+
+# Web framework
+Flask==3.1.0
+gunicorn==23.0.0
+
+# Database (Supabase)
+supabase==2.13.0
+
+# AI
+openai==1.68.2
+google-genai==1.8.0
+
+# Payments
+stripe==11.5.0
+
+# Email
+resend==2.6.0
+
+# Security & middleware
+Flask-Limiter==3.12
+Flask-Cors==5.0.1
+Flask-Talisman==1.1.0
+
+# Input validation
+marshmallow==3.26.1
+
+# Environment
+python-dotenv==1.1.0
+
+# HTTP client (for UptimeRobot heartbeat, etc.)
+requests==2.32.3

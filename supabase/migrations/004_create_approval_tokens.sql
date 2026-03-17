@@ -1,0 +1,2 @@
+﻿-- ReplyIQ Migration: 004_create_approval_tokens
+-- Phase 2 — will contain CREATE TABLE + RLS + policies + indexes

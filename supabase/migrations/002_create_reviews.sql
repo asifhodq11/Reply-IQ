@@ -1,0 +1,2 @@
+﻿-- ReplyIQ Migration: 002_create_reviews
+-- Phase 2 — will contain CREATE TABLE + RLS + policies + indexes

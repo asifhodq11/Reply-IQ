@@ -1,0 +1,2 @@
+﻿-- ReplyIQ Migration: 006_add_all_indexes
+-- Phase 2 — will contain CREATE TABLE + RLS + policies + indexes

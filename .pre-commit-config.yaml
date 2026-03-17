@@ -1,0 +1,26 @@
+# ============================================================
+# ReplyIQ Backend — Pre-commit Hooks
+# Runs automatically on every git commit
+# Install with: pre-commit install
+# ============================================================
+
+repos:
+  # Black — auto-format Python code
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+        language_version: python3.12
+
+  # Flake8 — catch style and logic errors
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.2.0
+    hooks:
+      - id: flake8
+
+  # detect-secrets — block committed secrets
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']

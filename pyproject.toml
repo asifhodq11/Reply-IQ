@@ -1,0 +1,11 @@
+# ============================================================
+# ReplyIQ Backend — Black + isort Config
+# ============================================================
+
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 120

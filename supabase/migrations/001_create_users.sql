@@ -1,0 +1,2 @@
+﻿-- ReplyIQ Migration: 001_create_users
+-- Phase 2 — will contain CREATE TABLE + RLS + policies + indexes
