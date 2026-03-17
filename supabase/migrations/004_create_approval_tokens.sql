@@ -3,54 +3,48 @@
 -- ============================================================
 
 -- STEP 1: CREATE TABLE
-CREATE TABLE IF NOT EXISTS approval_tokens (
+CREATE TABLE public.approval_tokens (
     id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    reply_id   UUID NOT NULL REFERENCES replies(id) ON DELETE CASCADE,
-    user_id    UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    token      TEXT NOT NULL UNIQUE DEFAULT gen_random_uuid()::TEXT,
-    action     TEXT NOT NULL CHECK (action IN ('approve', 'reject')),
-    used       BOOLEAN NOT NULL DEFAULT FALSE,
-    expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '72 hours'),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    reply_id   UUID NOT NULL REFERENCES public.replies(id),
+    user_id    UUID NOT NULL REFERENCES public.users(id),
+    token      TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL DEFAULT (now() + INTERVAL '24 hours'),
+    used       BOOL NOT NULL DEFAULT false,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- STEP 2: ENABLE RLS
-ALTER TABLE approval_tokens ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.approval_tokens ENABLE ROW LEVEL SECURITY;
 
 -- STEP 3: POLICY — SELECT
--- Users can only see their own non-expired, non-used tokens
 CREATE POLICY "approval_tokens_select"
-ON approval_tokens
+ON public.approval_tokens
 FOR SELECT
-USING (
-    auth.uid() = user_id
-    AND used = FALSE
-    AND is_deleted = FALSE
-);
+USING (user_id = auth.uid() AND used = FALSE);
 
 -- STEP 4: POLICY — INSERT / UPDATE / DELETE
 CREATE POLICY "approval_tokens_insert"
-ON approval_tokens
+ON public.approval_tokens
 FOR INSERT
-WITH CHECK (auth.uid() = user_id);
+WITH CHECK (user_id = auth.uid());
 
 CREATE POLICY "approval_tokens_update"
-ON approval_tokens
+ON public.approval_tokens
 FOR UPDATE
-USING (auth.uid() = user_id AND used = FALSE)
-WITH CHECK (auth.uid() = user_id);
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
 
 CREATE POLICY "approval_tokens_delete"
-ON approval_tokens
+ON public.approval_tokens
 FOR DELETE
-USING (auth.uid() = user_id);
+USING (user_id = auth.uid());
 
 -- STEP 5: CREATE INDEX
-CREATE INDEX IF NOT EXISTS idx_approval_tokens_user_id
-    ON approval_tokens (user_id);
+CREATE UNIQUE INDEX idx_approval_tokens_token
+    ON public.approval_tokens (token);
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_approval_tokens_token
-    ON approval_tokens (token);
+CREATE INDEX idx_approval_tokens_user_id
+    ON public.approval_tokens (user_id);
 
-CREATE INDEX IF NOT EXISTS idx_approval_tokens_reply_id
-    ON approval_tokens (reply_id);
+CREATE INDEX idx_approval_tokens_reply_id
+    ON public.approval_tokens (reply_id);

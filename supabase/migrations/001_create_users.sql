@@ -3,62 +3,59 @@
 -- ============================================================
 
 -- STEP 1: CREATE TABLE
-CREATE TABLE IF NOT EXISTS users (
-    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email           TEXT NOT NULL UNIQUE,
-    business_name   TEXT,
-    gbp_location_id TEXT,
-    google_token    JSONB,
-    tier            TEXT NOT NULL DEFAULT 'smart_review'
-                        CHECK (tier IN ('auto_post', 'smart_review', 'manual_approve')),
-    plan            TEXT NOT NULL DEFAULT 'starter'
-                        CHECK (plan IN ('starter', 'growth', 'enterprise')),
-    replies_used    INTEGER NOT NULL DEFAULT 0,
-    replies_limit   INTEGER NOT NULL DEFAULT 50,
-    stripe_customer_id     TEXT,
-    stripe_subscription_id TEXT,
-    is_active       BOOLEAN NOT NULL DEFAULT TRUE,
-    is_deleted      BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+CREATE TABLE public.users (
+    id                        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email                     TEXT UNIQUE NOT NULL,
+    business_name             TEXT NOT NULL,
+    business_type             TEXT NOT NULL,
+    tone_preference           TEXT NOT NULL DEFAULT 'friendly',
+    plan                      TEXT NOT NULL DEFAULT 'free',
+    reply_count_this_month    INT NOT NULL DEFAULT 0,
+    billing_cycle_start       DATE NOT NULL DEFAULT CURRENT_DATE,
+    approval_tier             INT NOT NULL DEFAULT 2,
+    google_connected          BOOL NOT NULL DEFAULT false,
+    google_status             TEXT NOT NULL DEFAULT 'none',
+    google_location_id        TEXT,
+    stripe_customer_id        TEXT,
+    consecutive_poll_failures INT NOT NULL DEFAULT 0,
+    cancellation_reason       TEXT,
+    time_to_first_value_ms    INT,
+    is_deleted                BOOL NOT NULL DEFAULT false,
+    created_at                TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- STEP 2: ENABLE RLS
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
 -- STEP 3: POLICY — SELECT
--- Users can only read their own non-deleted row
 CREATE POLICY "users_select"
-ON users
+ON public.users
 FOR SELECT
 USING (
-    auth.uid() = id
-    AND is_deleted = FALSE
+    id = auth.uid()
+    AND is_deleted = false
 );
 
 -- STEP 4: POLICY — INSERT / UPDATE / DELETE
 CREATE POLICY "users_insert"
-ON users
+ON public.users
 FOR INSERT
-WITH CHECK (auth.uid() = id);
+WITH CHECK (id = auth.uid());
 
 CREATE POLICY "users_update"
-ON users
+ON public.users
 FOR UPDATE
-USING (auth.uid() = id AND is_deleted = FALSE)
-WITH CHECK (auth.uid() = id);
+USING (id = auth.uid())
+WITH CHECK (id = auth.uid());
 
 CREATE POLICY "users_delete"
-ON users
+ON public.users
 FOR DELETE
-USING (auth.uid() = id);
+USING (id = auth.uid());
 
 -- STEP 5: CREATE INDEX
-CREATE INDEX IF NOT EXISTS idx_users_email
-    ON users (email);
+CREATE INDEX idx_users_email
+    ON public.users (email);
 
-CREATE INDEX IF NOT EXISTS idx_users_stripe_customer_id
-    ON users (stripe_customer_id);
-
-CREATE INDEX IF NOT EXISTS idx_users_gbp_location_id
-    ON users (gbp_location_id);
+CREATE INDEX idx_users_stripe
+    ON public.users (stripe_customer_id);
