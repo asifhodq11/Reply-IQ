@@ -1,2 +1,19 @@
-﻿-- ReplyIQ Migration: 004_create_approval_tokens
--- Phase 2 — will contain CREATE TABLE + RLS + policies + indexes
+-- ============================================================
+-- Migration 004: approval_tokens
+-- Five steps in order — Bible non-negotiable law
+-- ============================================================
+
+-- STEP 1: CREATE TABLE
+-- (content goes here in Phase 2)
+
+-- STEP 2: ENABLE RLS
+-- (content goes here in Phase 2)
+
+-- STEP 3: POLICY — SELECT
+-- (content goes here in Phase 2)
+
+-- STEP 4: POLICY — INSERT / UPDATE / DELETE
+-- (content goes here in Phase 2)
+
+-- STEP 5: CREATE INDEX
+-- (content goes here in Phase 2)
