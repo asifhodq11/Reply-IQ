@@ -7,10 +7,10 @@
 
 ## Current State
 
-- **Phase:** 1 — App Factory
+- **Phase:** 2 — Database Migrations
 - **Status:** ✅ COMPLETE
-- **Last completed:** Built app factory, rigid config.py, errors, logger, and health check (2026-03-17)
-- **Next step:** Begin Phase 2 — Database Migrations (5 files, RLS, indexes)
+- **Last completed:** All 5 migrations run, health endpoint verified showing database ok (2026-03-17)
+- **Next step:** Begin Phase 3 — Authentication
 
 ---
 
@@ -43,6 +43,9 @@
 | 3 | 2026-03-17 | 14 env keys confirmed as-is | Verified against Bible |
 | 4 | 2026-03-17 | Python 3.12 target (safer compatibility) | User has 3.14 installed but 3.12 has wider package support (added .python-version file) |
 | 5 | 2026-03-17 | `config.py` enforces immediate crash if keys missing | User explicitly requested `os.environ['KEY']` over `.get()` to prevent silent failures |
+| 6 | 2026-03-17 | Key names differ slightly from Bible | Code uses SUPABASE_SERVICE_ROLE_KEY and STRIPE_PRICE_ID_STARTER. Bible says SUPABASE_SERVICE_KEY and STRIPE_STARTER_PRICE_ID. Code is internally consistent — no change made. |
+| 9 | 2026-03-17 | Health endpoint updated | Queries users table directly instead of RPC function because tables now exist after Phase 2 |
+| 10 | 2026-03-17 | Environment shows as 'unknown' in health response | Cosmetic only, not a bug, fix later |
 
 ---
 
@@ -58,13 +61,22 @@
 | 1 | Empty route blueprints defined & registered | ✅ Done | 2026-03-17 |
 | 1 | `/health` route (DB ping using shared client) | ✅ Done | 2026-03-17 |
 | 1 | `__init__.py` App Factory | ✅ Done | 2026-03-17 |
-| 2 | DB Migrations (tables, RLS policies, indexes) | ⬜ Not started | — |
+| 2 | `001_create_users.sql` | ✅ Done | 2026-03-17 |
+| 2 | `002_create_reviews.sql` | ✅ Done | 2026-03-17 |
+| 2 | `003_create_replies.sql` | ✅ Done | 2026-03-17 |
+| 2 | `004_create_approval_tokens.sql` | ✅ Done | 2026-03-17 |
+| 2 | `005_create_poller_log.sql` | ✅ Done | 2026-03-17 |
+| 2 | Health endpoint fixed | ✅ Done | 2026-03-17 |
+| 3 | Authentication | ⬜ Not started | — |
 
 ---
 
 ## Notes for Next Conversation
 
 If starting a new chat, tell the AI:
-1. We are ready for **Phase 2 — Migrations**
-2. Last completed: **Phase 1 — App Factory (fully complete)**
-3. Read this file (`DECISIONS.md`) and the Bible (`ReplyIQ_Bible.docx`)
+1. Ready for Phase 3 — Authentication
+2. Last completed: Phase 2 fully verified
+3. Read DECISIONS.md and ReplyIQ_Bible.docx
+4. Phase 3 builds: user_model.py, decorators.py, auth_schema.py, auth.py routes, and 8 auth tests
+5. Before writing tests, run the 5 migrations on the TEST Supabase project too
+6. Also run the same 5 SQL files against the test Supabase project before Phase 3 tests can run
