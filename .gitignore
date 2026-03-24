@@ -35,3 +35,6 @@ htmlcov/
 
 # ===== Misc =====
 *.log
+fail_output.txt
+tests_output.txt
+secrets.json

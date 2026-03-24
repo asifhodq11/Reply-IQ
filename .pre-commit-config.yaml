@@ -24,3 +24,9 @@ repos:
     hooks:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
+        exclude: |
+          (?x)^(
+            \.venv/.*|
+            tests/.*|
+            \.secrets\.baseline
+          )$

@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 # Only add handler if not already present (prevents duplicates when reloading)
 if not logger.handlers:
     handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(logging.Formatter('%(message)s'))
+    handler.setFormatter(logging.Formatter("%(message)s"))
     logger.addHandler(handler)
 
 
