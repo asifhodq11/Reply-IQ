@@ -11,9 +11,22 @@ from google import genai
 
 from app.services.model_router import classify_complexity, get_model_for_complexity
 
-# Instantiate global clients (env vars loaded by run.py/config.py)
-openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-gemini_client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+# Gemini client — always initialised the same way
+gemini_client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY", ""))
+
+def get_openai_client() -> OpenAI:
+    """
+    Returns an OpenAI-compatible client.
+    When AI_PROVIDER=openrouter, points to OpenRouter.
+    When AI_PROVIDER=openai, points to OpenAI directly.
+    """
+    provider = os.environ.get("AI_PROVIDER", "openrouter")
+    if provider == "openrouter":
+        return OpenAI(
+            api_key=os.environ["OPENROUTER_API_KEY"],
+            base_url="https://openrouter.ai/api/v1",
+        )
+    return OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 
 STAR_INSTRUCTIONS = {
@@ -72,7 +85,7 @@ def call_llm(system_prompt: str, user_prompt: str, model_id: str) -> str:
                 return response.text.strip()
             else:
                 # GPT-4o / GPT-4o-mini
-                response = openai_client.chat.completions.create(
+                response = get_openai_client().chat.completions.create(
                     model=model_id,
                     messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
                     temperature=0.7,

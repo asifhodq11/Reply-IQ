@@ -5,6 +5,8 @@ Implements the Smart Model Router defined in Chapter 6.
 Classifies review complexity and returns the exact model string to use.
 """
 
+import os
+
 # Exact list from Chapter 6 of the Bible
 CRISIS_WORDS = [
     "lawyer",
@@ -47,12 +49,24 @@ def classify_complexity(star_rating: int, review_text: str) -> str:
 
 def get_model_for_complexity(complexity: str) -> str:
     """
-    Maps the complexity string to the actual API model name.
+    Maps complexity to the correct model string.
+    Reads AI_PROVIDER env var to select the right
+    model name format for OpenRouter or OpenAI direct.
     """
-    mapping = {
-        "crisis": "gpt-4o",  # OpenAI GPT-4o Full
-        "simple": "gemini-2.0-flash-lite-preview-02-05",  # Google Gemini 2.0 Flash-Lite
-        "standard": "gpt-4o-mini",  # OpenAI GPT-4o-mini (Quality Floor)
+    provider = os.environ.get("AI_PROVIDER", "openrouter")
+
+    models = {
+        "openai": {
+            "crisis":   "gpt-4o",
+            "simple":   "gemini-2.0-flash-lite-preview-02-05",
+            "standard": "gpt-4o-mini",
+        },
+        "openrouter": {
+            "crisis":   "openai/gpt-4o",
+            "simple":   "google/gemini-2.0-flash-lite",
+            "standard": "openai/gpt-4o-mini",
+        },
     }
-    # Fallback safely to standard if unknown
-    return mapping.get(complexity, "gpt-4o-mini")
+
+    provider_models = models.get(provider, models["openrouter"])
+    return provider_models.get(complexity, "openai/gpt-4o-mini")

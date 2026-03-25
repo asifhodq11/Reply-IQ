@@ -8,6 +8,8 @@ os.environ['SUPABASE_ANON_KEY'] = FAKE_JWT
 os.environ['SUPABASE_SERVICE_ROLE_KEY'] = FAKE_JWT
 os.environ['OPENAI_API_KEY'] = 'test-openai-key'
 os.environ['GEMINI_API_KEY'] = 'test-gemini-key'
+os.environ['OPENROUTER_API_KEY'] = 'test-openrouter-key'
+os.environ['AI_PROVIDER'] = 'openrouter'
 os.environ['FRONTEND_URL'] = 'http://localhost'
 
 from unittest.mock import patch, MagicMock
@@ -38,9 +40,9 @@ def test_generate_reply_pipeline_standard(mock_call_llm):
     assert mock_call_llm.call_count == 3
     
     # 2. Verify model choice for 'standard' complexity
-    # rating 4 + text -> standard -> gpt-4o-mini
+    # rating 4 + text -> standard -> openai/gpt-4o-mini (openrouter mode)
     for call in mock_call_llm.call_args_list:
-        assert call[0][2] == 'gpt-4o-mini'
+        assert call[0][2] == 'openai/gpt-4o-mini'
     
     # 3. Verify final return
     assert result == "Pass 3: Final audited reply."
@@ -58,9 +60,9 @@ def test_generate_reply_model_routing_crisis(mock_call_llm):
         review_text="I am going to sue you for food poisoning."
     )
     
-    # Verify first call used the crisis model
+    # Verify first call used the crisis model (openrouter mode)
     model_used = mock_call_llm.call_args_list[0][0][2]
-    assert model_used == 'gpt-4o'
+    assert model_used == 'openai/gpt-4o'
 
 
 @patch('app.services.ai_engine.call_llm')
@@ -76,9 +78,9 @@ def test_generate_reply_model_routing_simple(mock_call_llm):
         review_text="Great!"
     )
     
-    # Verify model choice
+    # Verify model choice (openrouter mode)
     model_used = mock_call_llm.call_args_list[0][0][2]
-    assert model_used == 'gemini-2.0-flash-lite-preview-02-05'
+    assert model_used == 'google/gemini-2.0-flash-lite'
 
 
 @patch('app.services.ai_engine.call_llm')

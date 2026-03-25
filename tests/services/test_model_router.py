@@ -8,6 +8,8 @@ os.environ['SUPABASE_ANON_KEY'] = FAKE_JWT
 os.environ['SUPABASE_SERVICE_ROLE_KEY'] = FAKE_JWT
 os.environ['OPENAI_API_KEY'] = 'test-openai-key'
 os.environ['GEMINI_API_KEY'] = 'test-gemini-key'
+os.environ['OPENROUTER_API_KEY'] = 'test-openrouter-key'
+os.environ['AI_PROVIDER'] = 'openrouter'
 os.environ['FRONTEND_URL'] = 'http://localhost'
 
 import pytest
@@ -39,7 +41,8 @@ def test_classify_standard():
     assert classify_complexity(2, "Poor.") == 'standard' # No crisis word
 
 def test_model_mapping():
-    assert get_model_for_complexity('crisis') == 'gpt-4o'
-    assert get_model_for_complexity('simple') == 'gemini-2.0-flash-lite-preview-02-05'
-    assert get_model_for_complexity('standard') == 'gpt-4o-mini'
-    assert get_model_for_complexity('unknown') == 'gpt-4o-mini'
+    # Default provider is openrouter — expect prefixed names
+    assert get_model_for_complexity('crisis') == 'openai/gpt-4o'
+    assert get_model_for_complexity('simple') == 'google/gemini-2.0-flash-lite'
+    assert get_model_for_complexity('standard') == 'openai/gpt-4o-mini'
+    assert get_model_for_complexity('unknown') == 'openai/gpt-4o-mini'
